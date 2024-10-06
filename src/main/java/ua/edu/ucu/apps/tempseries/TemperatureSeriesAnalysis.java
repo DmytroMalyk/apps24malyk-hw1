@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 @Getter
 public class TemperatureSeriesAnalysis {
-    private static final int Minimal = -273;
+    private static final int MINIMAL = -273;
     private double[] temperatures;
     private int size;
     private int capacity;
@@ -21,7 +21,7 @@ public class TemperatureSeriesAnalysis {
 
     public TemperatureSeriesAnalysis(double[] temperatureSeries) {
         for (double el : temperatureSeries) {
-            if (el < Minimal) {
+            if (el < MINIMAL) {
                 throw new InputMismatchException();
             }
         }
@@ -72,7 +72,7 @@ public class TemperatureSeriesAnalysis {
         if (size == 0) {
             throw new IllegalArgumentException();
         }
-        double highest = Minimal;
+        double highest = MINIMAL;
         for (int i = 0; i < size; i++) {
             if (temperatures[i] > highest) {
                 highest = temperatures[i];
@@ -85,14 +85,14 @@ public class TemperatureSeriesAnalysis {
         if (size == 0) {
             throw new IllegalArgumentException();
         }
-        double distance_to_zero = Double.MAX_VALUE;
+        double distanceZero = Double.MAX_VALUE;
         double temp = 0;
         for (int i = 0; i < size; i++) {
             double el = temperatures[i];
-            if (Math.abs(el) < distance_to_zero) {
-                distance_to_zero = Math.abs(el);
+            if (Math.abs(el) < distanceZero) {
+                distanceZero = Math.abs(el);
                 temp = el;
-            } else if (Double.compare(Math.abs(el), distance_to_zero) == 0) {
+            } else if (Double.compare(Math.abs(el), distanceZero) == 0) {
                 if (el > 0) { temp = el; }
             }
         }
@@ -103,14 +103,15 @@ public class TemperatureSeriesAnalysis {
         if (size == 0) {
             throw new IllegalArgumentException();
         }
-        double distance_to_value = Double.MAX_VALUE;
+        double distanceValue = Double.MAX_VALUE;
         double temp = 0;
         for (int i = 0; i < size; i++) {
             double el = temperatures[i];
-            if (Math.abs(el - tempValue) < distance_to_value) {
-                distance_to_value = Math.abs(el - tempValue);
+            if (Math.abs(el - tempValue) < distanceValue) {
+                distanceValue = Math.abs(el - tempValue);
                 temp = el;
-            } else if (Double.compare(Math.abs(el - tempValue), distance_to_value) == 0) {
+            } else if (Double.compare(Math.abs(el - tempValue), 
+                    distanceValue) == 0) {
                 if (el > 0) { temp = el; }
             }
         }
@@ -198,13 +199,17 @@ public class TemperatureSeriesAnalysis {
 
     public int addTemps(double... temps) {
         for (double temp : temps) {
-            if (temp < Minimal) {
+            if (temp < MINIMAL) {
                 throw new InputMismatchException();
             }
         }
         if (temps.length + size > capacity) {
             while (capacity < (temps.length + size)) {
-                capacity = (capacity == 0) ? 1 : capacity * 2;
+                if (capacity == 0) {
+                    capacity = 1;
+                } else {
+                    capacity *= 2;
+                }
             }
             double[] newTemperatures = new double[capacity];
             for (int i = 0; i < size; i++) {
