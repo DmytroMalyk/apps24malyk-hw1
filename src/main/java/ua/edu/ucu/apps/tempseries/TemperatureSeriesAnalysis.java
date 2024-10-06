@@ -1,64 +1,215 @@
 package ua.edu.ucu.apps.tempseries;
 
+import java.util.InputMismatchException;
+import java.util.Arrays;
+
 public class TemperatureSeriesAnalysis {
+    double[] temperatures;
+    int size;
+    int capacity;
 
     public TemperatureSeriesAnalysis() {
-
+        this.temperatures = new double[0];
+        this.size = 0;
+        this.capacity = 0;
     }
 
     public TemperatureSeriesAnalysis(double[] temperatureSeries) {
-
+        for (double el : temperatureSeries) {
+            if (el < (double) -273) {
+                throw new InputMismatchException();
+            }
+        }
+        this.temperatures = temperatureSeries;
+        this.size = temperatureSeries.length;
+        this.capacity = temperatureSeries.length;
     }
 
     public double average() {
-        return -1;
+        if (size == 0) {
+            throw new IllegalArgumentException();
+        }
+        int count = 0;
+        double sum = 0;
+        for (double el: temperatures) {
+            sum += el;
+            count += 1;
+        }
+        return sum/count;
     }
 
     public double deviation() {
-        return 0;
+        if (size == 0) {
+            throw new IllegalArgumentException();
+        }
+        double numerator = 0;
+        double mean = this.average();
+        for (double el : temperatures) {
+            numerator += Math.pow(el - mean, 2);
+        }
+        return Math.sqrt(numerator/size);
     }
 
     public double min() {
-        return 0;
+        if (size == 0) {
+            throw new IllegalArgumentException();
+        }
+        double lowest = -274;
+        for (int i = 0; i < size; i++) {
+            if (temperatures[i] < lowest) {
+                lowest = temperatures[i];
+            }
+        }
+        return lowest;
     }
 
     public double max() {
-        return 0;
+        if (size == 0) {
+            throw new IllegalArgumentException();
+        }
+        double highest = Double.MAX_VALUE;
+        for (int i = 0; i < size; i++) {
+            if (temperatures[i] > highest) {
+                highest = temperatures[i];
+            }
+        }
+        return highest;
     }
 
     public double findTempClosestToZero() {
-        return 0;
+        if (size == 0) {
+            throw new IllegalArgumentException();
+        }
+        double distance_to_zero = Double.MAX_VALUE;
+        double temp = 0;
+        for (int i = 0; i < size; i++) {
+            double el = temperatures[i];
+            if (Math.abs(el) < distance_to_zero) {
+                distance_to_zero = Math.abs(el);
+                temp = el;
+            } else if (Double.compare(Math.abs(el), distance_to_zero) == 0) {
+                if (el > 0) { temp = el; }
+            }
+        }
+        return temp;
     }
 
     public double findTempClosestToValue(double tempValue) {
-        return 0;
+        if (size == 0) {
+            throw new IllegalArgumentException();
+        }
+        double distance_to_value = Double.MAX_VALUE;
+        double temp = 0;
+        for (int i = 0; i < size; i++) {
+            double el = temperatures[i];
+            if (Math.abs(el - tempValue) < distance_to_value) {
+                distance_to_value = Math.abs(el - tempValue);
+                temp = el;
+            } else if (Double.compare(Math.abs(el - tempValue), distance_to_value) == 0) {
+                if (el > 0) { temp = el; }
+            }
+        }
+        return temp;
     }
 
     public double[] findTempsLessThen(double tempValue) {
-        return null;
+        if (size == 0) {
+            throw new IllegalArgumentException();
+        }
+        int count = 0;
+        for (double el : temperatures) {
+            if (el < tempValue) {
+                count++;
+            }
+        }
+        double[] result = new double[count];
+        int index = 0;
+        for (double el : temperatures) {
+            if (el < tempValue) {
+                result[index++] = el;
+            }
+        }
+        return result;
     }
 
     public double[] findTempsGreaterThen(double tempValue) {
-        return null;
+        if (size == 0) {
+            throw new IllegalArgumentException();
+        }
+        int count = 0;
+        for (double el : temperatures) {
+            if (el > tempValue) {
+                count++;
+            }
+        }
+        double[] result = new double[count];
+        int index = 0;
+        for (double el : temperatures) {
+            if (el > tempValue) {
+                result[index++] = el;
+            }
+        }
+        return result;
     }
 
     public double[] findTempsInRange(double lowerBound, double upperBound) {
-        return null;
+        if (size == 0) {
+            throw new IllegalArgumentException();
+        }
+        int count = 0;
+        for (double el : temperatures) {
+            if (el > lowerBound && el < upperBound) {
+                count++;
+            }
+        }
+        double[] result = new double[count];
+        int index = 0;
+        for (double el : temperatures) {
+            if (el > lowerBound && el < upperBound) {
+                result[index++] = el;
+            }
+        }
+        return result;
     }
 
     public void reset() {
-
+        temperatures = new double[0];
+        size = 0;
+        capacity = 0;
     }
 
     public double[] sortTemps() {
-        return null;
+        double[] copy = temperatures.clone();
+        Arrays.sort(copy);
+        return copy;
     }
 
     public TempSummaryStatistics summaryStatistics() {
-        return null;
+        if (size == 0) {
+            throw new IllegalArgumentException();
+        }
+        return new TempSummaryStatistics(average(), deviation(), min(), max());
     }
 
     public int addTemps(double... temps) {
-        return 0;
+        for (double temp : temps) {
+            if (temp < -273) {
+                throw new InputMismatchException();
+            }
+        }
+        if (temps.length + size > capacity) {
+            while (capacity < (temps.length + size)) {
+                capacity *= 2;
+            }
+            double[] newTemperatures = new double[capacity];
+            for (int i = 0; i < size; i++) {
+                newTemperatures[i] = temperatures[i];
+            }
+            temperatures = newTemperatures;
+        }
+        for (double temp : temps) {
+            temperatures[size++] = temp;
+        }
+        return size;
     }
 }
