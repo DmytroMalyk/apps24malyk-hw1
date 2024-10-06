@@ -2,11 +2,8 @@ package ua.edu.ucu.apps.tempseries;
 
 import java.util.InputMismatchException;
 
-import lombok.Getter;
-
 import java.util.Arrays;
 
-@Getter
 public class TemperatureSeriesAnalysis {
     private static final int MINIMAL = -273;
     private double[] temperatures;
@@ -25,9 +22,13 @@ public class TemperatureSeriesAnalysis {
                 throw new InputMismatchException();
             }
         }
-        this.temperatures = temperatureSeries;
+        this.temperatures = Arrays.copyOf(temperatureSeries, temperatureSeries.length);
         this.size = temperatureSeries.length;
         this.capacity = temperatureSeries.length;
+    }
+
+    public int getSize() {
+        return size;
     }
 
     public double average() {
