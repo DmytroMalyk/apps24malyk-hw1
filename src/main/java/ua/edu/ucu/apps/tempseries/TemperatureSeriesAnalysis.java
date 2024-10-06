@@ -1,12 +1,17 @@
 package ua.edu.ucu.apps.tempseries;
 
 import java.util.InputMismatchException;
+
+import lombok.Getter;
+
 import java.util.Arrays;
 
+@Getter
 public class TemperatureSeriesAnalysis {
-    double[] temperatures;
-    int size;
-    int capacity;
+    private static final int Minimal = -273;
+    private double[] temperatures;
+    private int size;
+    private int capacity;
 
     public TemperatureSeriesAnalysis() {
         this.temperatures = new double[0];
@@ -16,7 +21,7 @@ public class TemperatureSeriesAnalysis {
 
     public TemperatureSeriesAnalysis(double[] temperatureSeries) {
         for (double el : temperatureSeries) {
-            if (el < (double) -273) {
+            if (el < Minimal) {
                 throw new InputMismatchException();
             }
         }
@@ -45,7 +50,7 @@ public class TemperatureSeriesAnalysis {
         double numerator = 0;
         double mean = this.average();
         for (double el : temperatures) {
-            numerator += Math.pow(el - mean, 2);
+            numerator += (el - mean) * (el - mean);
         }
         return Math.sqrt(numerator/size);
     }
@@ -54,7 +59,7 @@ public class TemperatureSeriesAnalysis {
         if (size == 0) {
             throw new IllegalArgumentException();
         }
-        double lowest = -274;
+        double lowest = Double.MAX_VALUE;
         for (int i = 0; i < size; i++) {
             if (temperatures[i] < lowest) {
                 lowest = temperatures[i];
@@ -67,7 +72,7 @@ public class TemperatureSeriesAnalysis {
         if (size == 0) {
             throw new IllegalArgumentException();
         }
-        double highest = Double.MAX_VALUE;
+        double highest = Minimal;
         for (int i = 0; i < size; i++) {
             if (temperatures[i] > highest) {
                 highest = temperatures[i];
@@ -193,13 +198,13 @@ public class TemperatureSeriesAnalysis {
 
     public int addTemps(double... temps) {
         for (double temp : temps) {
-            if (temp < -273) {
+            if (temp < Minimal) {
                 throw new InputMismatchException();
             }
         }
         if (temps.length + size > capacity) {
             while (capacity < (temps.length + size)) {
-                capacity *= 2;
+                capacity = (capacity == 0) ? 1 : capacity * 2;
             }
             double[] newTemperatures = new double[capacity];
             for (int i = 0; i < size; i++) {
