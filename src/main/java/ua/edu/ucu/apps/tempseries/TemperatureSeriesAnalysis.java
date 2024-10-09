@@ -17,13 +17,17 @@ public class TemperatureSeriesAnalysis {
     }
 
     public TemperatureSeriesAnalysis(double[] temperatureSeries) {
+        this.temperatures = null;
+        this.size = 0;
+        this.capacity = 0;
         for (double el : temperatureSeries) {
             if (el < MINIMAL) {
                 throw new InputMismatchException();
             }
         }
         this.temperatures = new double[temperatureSeries.length];
-        System.arraycopy(temperatureSeries, 0, this.temperatures, 0, temperatureSeries.length);
+        System.arraycopy(temperatureSeries, 0, this.temperatures,
+                         0, temperatureSeries.length);
     
         this.size = temperatureSeries.length;
         this.capacity = temperatureSeries.length;
